@@ -10,22 +10,22 @@ package enum
 		private static const dictionaryInstances:Dictionary = new Dictionary();		
 		public function Enumeration()
 		{
-			var classConstructor:Class = this["constructor"];
+			var classConstructor:Class = Object(this).constructor;
 			if(!dictionaryInstances[classConstructor])
 			{
 				CONFIG::debugging
 					{
-						var className:String = getQualifiedClassName(this);
-						if(className == getQualifiedClassName(Enumeration))
+						if(classConstructor == Enumeration) 
 							throw new ArgumentError("Enumeration class cannot be instantiated.");
 						
 						var describeXML:XML = describeType(classConstructor);
+						var className:String = describeXML.@name;
 						var list:XMLList = describeXML.factory.variable.(@name != "value");
 						if(list.length()) 
 						{
 							var variables:String = new String();
 							for each(var item:XML in list)
-							variables += "\n"+item.@name;
+								variables += "\n"+item.@name;
 							trace("Warning!!! Class \"" + className + "\" has variables:"+ variables);
 						}	 
 						list = describeXML.factory.constant;
@@ -33,7 +33,7 @@ package enum
 						{			
 							var constants:String = new String();
 							for each(item in list)
-							constants += "\n"+item.@name;
+								constants += "\n"+item.@name;
 							trace("Warning!!! Class \"" + className + "\" has  not static constants:" + constants);
 						}
 						
